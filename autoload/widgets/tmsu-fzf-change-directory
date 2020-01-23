@@ -2,10 +2,10 @@
 
 __fzf::widget::init 'cd --' || return 1
 
-tmsu files --directory $(
-	tmsu tags | \
-	__fzf::widget::select $FZF_WIDGET_OPTS[tmsu-change-dir] +m
-  ) | \
+tag=$(tmsu tags | \
+	__fzf::widget::select $FZF_WIDGET_OPTS[tmsu-change-dir] +m)
+
+tmsu files --directory $tag | \
   __fzf::widget::select $FZF_WIDGET_OPTS[tmsu-change-dir] +m | \
   __fzf::widget::insert -q
 
