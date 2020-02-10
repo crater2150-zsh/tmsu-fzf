@@ -1,11 +1,39 @@
 #!/bin/zsh
 
-__fzf::widget::init 'cd --' || return 1
+__fzf::widget::init || return 1
 
-tag=$(tmsu tags | \
-	__fzf::widget::select $FZF_WIDGET_OPTS[tmsu-change-dir] +m)
+local done_marker='<done>'
 
-tmsu files --directory $tag | \
+__fzf::widget::tmsu::tag() {
+  cat <(tmsu tags) <(echo $done_marker) | \
+	__fzf::widget::select $FZF_WIDGET_OPTS[tmsu-change-dir] --no-sort --tac "--prompt=$* >" +m
+}
+
+
+typeset -a tags
+local finished=0
+local next
+while next=$(__fzf::widget::tmsu::tag $tags); do
+  if [[ ${next} == $done_marker ]]; then
+    finished=1
+    break
+  elif [[ -z $next ]]; then
+    # __fzf::widget::select sometimes returns 0, even if aborted with <esc>
+    return 1
+  else
+    tags+=$next
+  fi
+done
+# loop ended with nonzero fzf return value => user aborted
+[[ $finished == 1 ]] || return 1
+# no tags given
+[[ -n $tags ]] || return 1
+
+BUFFER="cd -- "
+CURSOR=$#BUFFER
+zle redisplay
+
+tmsu files --directory "${tags[@]}" | \
   __fzf::widget::select $FZF_WIDGET_OPTS[tmsu-change-dir] +m | \
   __fzf::widget::insert -q
 

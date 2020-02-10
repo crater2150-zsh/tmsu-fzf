@@ -3,6 +3,7 @@
 [Overview](#overview) |
 [Installation](#installation) |
 [Requirements](#requirements) |
+[Widgets](#widgets) |
 [License](#license)
 
 [![license-badge]][license-link]
@@ -30,6 +31,18 @@ zplug 'crater2150/tmsu-fzf'
 
 - [fzf-widgets][fzf-widgets-link] 
 - [TMSU][tmsu-link]
+
+## Widgets
+
+To use the provided widgets, bind them to a key in your zshrc, e.g.
+```zsh
+bindkey "^t" tmsu-fzf-change-directory
+```
+
+### `tmsu-fzf-change-directory`
+Prompts for tags until `<done>` is selected. Then all directories matching the
+tags are listed. Select one to change to it.
+
 
 ## License
 
