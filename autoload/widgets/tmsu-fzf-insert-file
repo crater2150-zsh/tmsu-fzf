@@ -1,0 +1,11 @@
+#!/bin/zsh
+
+__fzf::widget::init || return 1
+
+local tags
+tags=$(__fzf::widget::tmsu::multitag) || return 1
+[[ -n $tags ]] || return 1
+
+tmsu files "${tags[@]}" | \
+  __fzf::widget::select $FZF_WIDGET_OPTS[tmsu-change-dir] -m | \
+  __fzf::widget::insert -q

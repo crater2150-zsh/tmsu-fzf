@@ -43,6 +43,9 @@ bindkey "^t" tmsu-fzf-change-directory
 Prompts for tags until `<done>` is selected. Then all directories matching the
 tags are listed. Select one to change to it.
 
+### `tmsu-fzf-insert-file`
+Prompts for tags until `<done>` is selected. Then all matching entries for the
+tags are listed. Select one to insert it at the current cursor position.
 
 ## License
 
