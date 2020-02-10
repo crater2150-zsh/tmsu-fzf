@@ -2,31 +2,8 @@
 
 __fzf::widget::init || return 1
 
-local done_marker='<done>'
-
-__fzf::widget::tmsu::tag() {
-  cat <(tmsu tags) <(echo $done_marker) | \
-	__fzf::widget::select $FZF_WIDGET_OPTS[tmsu-change-dir] --no-sort --tac "--prompt=$* >" +m
-}
-
-
-typeset -a tags
-local finished=0
-local next
-while next=$(__fzf::widget::tmsu::tag $tags); do
-  if [[ ${next} == $done_marker ]]; then
-    finished=1
-    break
-  elif [[ -z $next ]]; then
-    # __fzf::widget::select sometimes returns 0, even if aborted with <esc>
-    return 1
-  else
-    tags+=$next
-  fi
-done
-# loop ended with nonzero fzf return value => user aborted
-[[ $finished == 1 ]] || return 1
-# no tags given
+local tags
+tags=$(__fzf::widget::tmsu::multitag) || return 1
 [[ -n $tags ]] || return 1
 
 BUFFER="cd -- "

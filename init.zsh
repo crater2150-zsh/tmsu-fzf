@@ -1,4 +1,5 @@
 export TMSU_FZF_ROOT="$0:a:h"
+export TMSU_FZF_DONE='<done>'
 
 : "Autoload functions and Create widgets" && () {
   local dir="$TMSU_FZF_ROOT/autoload"

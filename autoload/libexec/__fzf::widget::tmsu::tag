@@ -1,0 +1,6 @@
+#!/bin/zsh
+
+
+cat <(tmsu tags) <(echo $TMSU_FZF_DONE) | \
+  __fzf::widget::select $FZF_WIDGET_OPTS[tmsu-change-dir] --no-sort --tac "--prompt=$* >" +m
+

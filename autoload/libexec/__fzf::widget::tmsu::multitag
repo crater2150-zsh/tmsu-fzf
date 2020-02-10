@@ -1,0 +1,22 @@
+#!/bin/zsh
+
+typeset -a tags
+local finished=0
+local next
+while next=$(__fzf::widget::tmsu::tag $tags); do
+  if [[ ${next} == $TMSU_FZF_DONE ]]; then
+    finished=1
+    break
+  elif [[ -z $next ]]; then
+    # __fzf::widget::select sometimes returns 0, even if aborted with <esc>
+    return 1
+  else
+    tags+=$next
+  fi
+done
+# loop ended with nonzero fzf return value => user aborted
+[[ $finished == 1 ]] || return 1
+# no tags given
+[[ -n $tags ]] || return 1
+
+echo $tags
