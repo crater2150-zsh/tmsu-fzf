@@ -1,6 +1,27 @@
 #!/bin/zsh
 
+local selected
 
-cat <(tmsu tags) <(echo $TMSU_FZF_DONE) | \
-  __fzf::widget::select $FZF_WIDGET_OPTS[tmsu-change-dir] --no-sort --tac "--prompt=$* >" +m
+if [[ "$1" == "--any-combination" ]] || zstyle -t ':fzf:tmsu:tag' disable-vfs; then
+  shift
+  selected=$(tmsu tags)
+else
+  TAGFS=$(tmsu mount | cut -d$'\t' -f3)
 
+  # if the VFS is mounted, use it to list only tags occurring in combination with
+  # the current ones
+  selected=$(
+    if [[ -n $TAGFS ]]; then
+      printf "%s\n" $TAGFS/tags/${(j:/:)@}/*~*/files(:t)
+    else
+      tmsu tags
+    fi
+  )
+fi
+
+if [[ -z "$selected" ]] && ! zstyle -t ':fzf:tmsu:tag' prompt-on-unique; then
+  echo "$TMSU_FZF_DONE"
+else
+  cat <<<"$selected" <<<"$TMSU_FZF_DONE" | \
+    __fzf::widget::select $FZF_WIDGET_OPTS[tmsu-change-dir] --no-sort --tac "--prompt=$* >" +m
+fi
